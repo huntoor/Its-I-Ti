@@ -12,13 +12,20 @@ public class PlayerMovement : MonoBehaviour
     private float moveVertical;
     bool isGrounded;
     bool canStand;
+    bool canCrouch;
+    bool canSprint;
+    bool canRun;
     int jumpCount;
 
     PlayerInput input;
 
+    Animator playerAnimations;
+
     private void Awake()
     {
         rb = this.GetComponent<Rigidbody2D>();
+
+        playerAnimations = GetComponent<Animator>();
 
         input = new PlayerInput();
         input.Enable();
@@ -32,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
         input.onFoot.Crouch.canceled += Uncrouch;
 
         input.onFoot.Sprint.performed += Sprint;
-        input.onFoot.Sprint.canceled += NormalSpeed;
+        input.onFoot.Sprint.canceled += Run;
 
         input.onFoot.Hit.performed += OnHit;
         input.onFoot.Hit.canceled += OnHit;
@@ -42,6 +49,9 @@ public class PlayerMovement : MonoBehaviour
         speed = 5f;
         jumpForce = 16f;
         canStand = true;
+        canCrouch = true;
+        canSprint = true;
+        canRun = true;
         jumpCount = 2;
     }
 
@@ -49,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Movement();
         CheckIsGrounded();
+        WallMechanics();
 
         if (!canStand)
         {
@@ -56,10 +67,13 @@ public class PlayerMovement : MonoBehaviour
 
             if (raycastHit2D.collider == null)
             {
-                StandAfterCrouch();
                 canStand = true;
+                StandAfterCrouch();
             }
         }
+
+        playerAnimations.SetFloat("speed", Mathf.Abs(moveHorizontal));
+        playerAnimations.SetFloat("yVelocity", rb.velocity.y);
     }
 
     void OnMoveInput(InputAction.CallbackContext context)
@@ -79,21 +93,43 @@ public class PlayerMovement : MonoBehaviour
 
     void CheckIsGrounded()
     {
-        RaycastHit2D hit = Physics2D.BoxCast(transform.position, new Vector2(0.6f, 1.2f), 0f, Vector2.down, 0.7f, 1<<7);
+        RaycastHit2D ground = Physics2D.BoxCast(transform.position, new Vector2(0.6f, 1.2f), 0f, Vector2.down, 0.7f, 1<<7);
 
-        if (hit.collider != null)
+        if (ground.collider != null)
         {
+            playerAnimations.SetBool("isGrounded", true);
+            playerAnimations.SetBool("secondJump", false);
+            playerAnimations.SetBool("isJumping", false);
             isGrounded = true;
             rb.gravityScale = 5;
         }
         else
         {
+            playerAnimations.SetBool("isGrounded", false);
             isGrounded = false;
+            canSprint = false;
+        }
+    }
+
+    void WallMechanics()
+    {
+        RaycastHit2D wall = Physics2D.BoxCast(transform.position, new Vector2(0.6f, 1.2f), 0f, transform.localScale.x * Vector2.right, 0.2f, 1 << 7);
+        Debug.DrawRay(transform.position, 0.3f * transform.localScale.x * Vector2.right, Color.red);
+
+        if (wall.collider != null && !isGrounded && moveHorizontal == 0f)
+        {
+            rb.gravityScale = 0.5f;
+            rb.velocity = new Vector2(0, -1f);
+        }
+        else if(wall.collider != null && moveHorizontal != 0f)
+        {
+            rb.gravityScale = 0.5f;
         }
     }
 
     void OnJumpInput(InputAction.CallbackContext context)
     {
+        playerAnimations.SetBool("isJumping", true);
         if (isGrounded)
         {
             Jump();
@@ -108,11 +144,13 @@ public class PlayerMovement : MonoBehaviour
 
     void Jump()
     {
+        playerAnimations.SetBool("secondJump", true);
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
     }
 
     void secondJump()
     {
+        playerAnimations.SetBool("secondJump", false);
         rb.velocity = new Vector2(rb.velocity.x, jumpForce * 0.9f);
     }
 
@@ -133,26 +171,46 @@ public class PlayerMovement : MonoBehaviour
 
     void StandAfterCrouch()
     {
+        canSprint = true;
+        canRun = true;
+        canCrouch = true;
+        playerAnimations.SetBool("isCrouching", false);
         speed = 5;
-        GetComponent<CapsuleCollider2D>().offset = new Vector2(0f, 0f);
         GetComponent<CapsuleCollider2D>().size = new Vector2(0.6f, 1.2f);
     }
 
     void Crouch(InputAction.CallbackContext context)
     {
-        speed = 2;
-        GetComponent<CapsuleCollider2D>().offset = new Vector2(0f, -0.2f);
-        GetComponent<CapsuleCollider2D>().size = new Vector2(0.6f, 0.8f);
+        if (canCrouch)
+        {
+            canSprint = false;
+            canRun = false;
+            playerAnimations.SetBool("isCrouching", true);
+            playerAnimations.SetBool("sprinting", false);
+            speed = 2;
+            GetComponent<CapsuleCollider2D>().size = new Vector2(0.6f, 0.8f);
+        }
     }
 
     void Sprint(InputAction.CallbackContext context)
     {
-        speed = 10;
+        if (canSprint)
+        {
+            canCrouch = false;
+            playerAnimations.SetBool("sprinting", true);
+            speed = 10;
+        }
     }
 
-    void NormalSpeed(InputAction.CallbackContext context)
+    void Run(InputAction.CallbackContext context)
     {
-        speed = 5;
+        if (canRun)
+        {
+            canSprint = true;
+            canCrouch = false;
+            playerAnimations.SetBool("sprinting", false);
+            speed = 5;
+        }
     }
 
     void OnHit(InputAction.CallbackContext context)
