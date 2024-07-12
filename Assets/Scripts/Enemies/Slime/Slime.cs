@@ -1,7 +1,16 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Slime : BaseEnemy
 {
+    [Space]
+    [Header("Audio Clips")]
+    [SerializeField] private AudioClip idleSoundClip;
+    [SerializeField] private AudioClip detectedPlayerSoundClip;
+    [SerializeField] private AudioClip attackingClip;
+
+    private AudioSource myAudioSource;
+
     private enum State
     {
         Patrol,
@@ -33,6 +42,7 @@ public class Slime : BaseEnemy
 
         myAnimator = GetComponent<Animator>();
 
+        myAudioSource = GetComponent<AudioSource>();
     }
 
     private void Start()
@@ -174,11 +184,28 @@ public class Slime : BaseEnemy
         switch (CurrentState)
         {
             case State.Patrol:
-                audioManager.PlaySound("slimeWalking", "slimeRunning");
+                // audioManager.PlaySound("slimeWalking", "slimeRunning");
+                myAudioSource.loop = true;
+                myAudioSource.clip = idleSoundClip;
+                myAudioSource.Play();
                 break;
             case State.Attack:
-                audioManager.PlaySound("PlayerDetected");
-                StartCoroutine(audioManager.PlaySoundNext("slimeRunning", "PlayerDetected"));
+                // myAudioSource.loop = false;
+                // myAudioSource.clip = detectedPlayerSoundClip;
+                // myAudioSource.Play();
+// 
+                // if (myAudioSource.clip == detectedPlayerSoundClip && !myAudioSource.isPlaying)
+                // {
+                //     myAudioSource.loop = true;
+                //     myAudioSource.clip = attackingClip;
+                //     myAudioSource.Play();
+                // }
+                Debug.Log(detectedPlayerSoundClip);
+                Debug.Log(attackingClip);
+                StartCoroutine(audioManager.PlaySoundNext(detectedPlayerSoundClip, false, attackingClip, true, myAudioSource));
+
+                //audioManager.PlaySound("PlayerDetected");
+                //StartCoroutine(audioManager.PlaySoundNext("slimeRunning", "PlayerDetected"));
                 break;
             default:
                 Debug.LogError("Handle Audio Error");

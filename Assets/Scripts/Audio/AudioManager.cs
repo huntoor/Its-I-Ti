@@ -81,6 +81,20 @@ public class AudioManager : MonoBehaviour
         nextSoundToPlay.source.Play();
     }
 
+    public IEnumerator PlaySoundNext(AudioClip firstSoundClipName, bool isFirstClipLooping, AudioClip secondSoundClipName, bool isSecondClipLooping, AudioSource audioSource)
+    {
+        audioSource.clip = firstSoundClipName;
+        audioSource.loop = isFirstClipLooping;
+        audioSource.Play();
+
+        var waitForRemaningTime = new WaitForSeconds(GetClipRemainingTime(audioSource));
+        yield return waitForRemaningTime;
+
+        audioSource.clip = secondSoundClipName;
+        audioSource.loop = isSecondClipLooping;
+        audioSource.Play();
+    }
+
     private float GetClipRemainingTime(AudioSource source)
     {
          float remainingTime = (source.clip.length - source.time) / source.pitch;

@@ -1,6 +1,5 @@
 using System.Resources;
 using System.Threading;
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -183,6 +182,7 @@ public class FlyingEye : BaseEnemy
             myAudioSource.clip = attackingClip;
             myAudioSource.loop = false;
             myAudioSource.Play();
+            Debug.Log(myAudioSource.isPlaying);
         }
         else
         {
@@ -222,12 +222,13 @@ public class FlyingEye : BaseEnemy
             case State.Patrol:
                 myAudioSource.clip = idleSoundClip;
                 myAudioSource.loop = true;
-                myAudioSource.Play();
+                myAudioSource.Play();Debug.Log(myAudioSource.isPlaying);
                 break;
             case State.Chasing:
                 myAudioSource.clip = idleSoundClip;
                 myAudioSource.loop = true;
                 myAudioSource.Play();
+                Debug.Log(myAudioSource.isPlaying);
                 break;
             case State.Attack:
                 break;

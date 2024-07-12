@@ -2,6 +2,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(AudioSource))]
 public abstract class BaseEnemy : MonoBehaviour
 {
     [Header("Movement")]
