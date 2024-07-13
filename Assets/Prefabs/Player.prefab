@@ -53,6 +53,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4617eb7d4eadb9c44b579e1641fa1039, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myAudioSource: {fileID: 2461114754071894342}
+  hurtClip: {fileID: 8300000, guid: 3e70361f1eddf8c41860c954769e0aef, type: 3}
 --- !u!114 &6585620115241799125
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,7 +84,11 @@ MonoBehaviour:
   speed: 5
   jumpForce: 18
   canDoubleAttack: 0
-  forestWalk: {fileID: 8300000, guid: ca3b3329b6e96c54d91d7b4f85235aa2, type: 3}
+  walkingClip: {fileID: 8300000, guid: c422d2557a408454c80edbc1570d9ee4, type: 3}
+  jumpOneClip: {fileID: 8300000, guid: d491e4059556d6f4195a84bb42a26a44, type: 3}
+  jumpTwoClip: {fileID: 8300000, guid: e6af204dd853e314cb2c346aec0bc4d1, type: 3}
+  attackOneClip: {fileID: 8300000, guid: aef0a3b20c2f5d949a9d804c3cdc1e36, type: 3}
+  attackTwoClip: {fileID: 8300000, guid: 47e54de005f0bf54e834cfa0cb2a300f, type: 3}
 --- !u!212 &2456466206488282439
 SpriteRenderer:
   m_ObjectHideFlags: 0

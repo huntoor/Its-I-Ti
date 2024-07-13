@@ -1,17 +1,20 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    //Rigidbody2D rb;
+    Rigidbody2D rb;
     int playerHealth;
     //int playerScore;
     int playerLives;
 
-    Vector2 checkpoint;
+    [SerializeField] private AudioSource myAudioSource;
+    [SerializeField] private AudioClip hurtClip;
+
 
     void Awake()
     {
-        //rb = this.GetComponent<Rigidbody2D>();
+        rb = this.GetComponent<Rigidbody2D>();
 
         DamageZone.damagePlayer += TakeDamage;
     }
@@ -21,7 +24,6 @@ public class Player : MonoBehaviour
         playerHealth = 10;
         //playerScore = 0;
         playerLives = 3;
-        checkpoint = transform.position;
     }
 
     void FixedUpdate()
@@ -32,6 +34,11 @@ public class Player : MonoBehaviour
     void TakeDamage(int damage)
     {
         playerHealth -= damage;
+
+        myAudioSource.clip = hurtClip;
+        myAudioSource.loop = false;
+        myAudioSource.Play();
+
         if (playerHealth <= 0)
         {
             Die();
@@ -58,7 +65,8 @@ public class Player : MonoBehaviour
 
     void PlayerRespawn()
     {
-        transform.position = checkpoint;
-        playerHealth = 100;
+        transform.position = GameManager.instance.LastSavePosition;
+
+        playerHealth = 10;
     }
 }

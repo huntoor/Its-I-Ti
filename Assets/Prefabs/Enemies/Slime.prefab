@@ -64,6 +64,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 247
   audioManager: {fileID: 0}
+  enemyHealth: 1
   idleSoundClip: {fileID: 8300000, guid: fd6d03fff921c4e459b7d995590aa61e, type: 3}
   detectedPlayerSoundClip: {fileID: 8300000, guid: 0082f8e606d2fa44494f22cd89105f3b, type: 3}
   attackingClip: {fileID: 8300000, guid: 771592c7bccdbb74180e047092429854, type: 3}

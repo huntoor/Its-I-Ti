@@ -65,7 +65,6 @@ public class FlyingEye : BaseEnemy
         moveToward = PatrolZone[0];
 
         attackTimer = 1f;
-
     }
 
     private void FixedUpdate()
@@ -191,17 +190,6 @@ public class FlyingEye : BaseEnemy
             }
         }
     }
-    
-    // protected override void TakeDamage(int damage)
-    // {
-    //     Debug.Log("Damage Enemy by " + damage);
-    //     enemyHealth -= damage;
-
-    //     if (enemyHealth <= 0)
-    //     {
-    //         Dead();
-    //     }
-    // }
 
     protected override void Dead()
     {

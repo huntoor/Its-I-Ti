@@ -1,3 +1,5 @@
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -28,14 +30,18 @@ public class PlayerMovement : MonoBehaviour
     Animator playerAnimations;
     
     AudioSource audioSource;
-    [SerializeField] AudioClip forestWalk;
+    [SerializeField] AudioClip walkingClip;
+    [SerializeField] AudioClip jumpOneClip;
+    [SerializeField] AudioClip jumpTwoClip;
+    [SerializeField] AudioClip attackOneClip;
+    [SerializeField] AudioClip attackTwoClip;
 
     public delegate void InteractPressed();
     public static InteractPressed interactPressed;
 
     private void Awake()
     {
-        rb = this.GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
 
         playerAnimations = GetComponent<Animator>();
 
@@ -171,10 +177,18 @@ public class PlayerMovement : MonoBehaviour
             if (isGrounded)
             {
                 Jump();
+
+                audioSource.clip = jumpOneClip;
+                audioSource.loop = false;
+                audioSource.Play();
             }
             else if (!isGrounded && jumpCount > 1)
             {
                 SecondJump();
+
+                audioSource.clip = jumpTwoClip;
+                audioSource.loop = false;
+                audioSource.Play();
             }
         }
     }
@@ -263,6 +277,10 @@ public class PlayerMovement : MonoBehaviour
             attackDelay = 1f;
 
             doubelAttackDelay = 2f;
+
+            audioSource.clip = attackOneClip;
+            audioSource.loop = false;
+            audioSource.Play();
         }
 
         if (canDoubleAttack && doubelAttackDelay > 0)
@@ -270,6 +288,10 @@ public class PlayerMovement : MonoBehaviour
             playerAnimations.SetTrigger("attackTwo");
 
             canDoubleAttack = false;
+            
+            audioSource.clip = attackOneClip;
+            audioSource.loop = false;
+            audioSource.Play();
         }
     }
 
