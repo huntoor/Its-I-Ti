@@ -46,6 +46,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Fall"",
+                    ""type"": ""Button"",
+                    ""id"": ""bd1ff00a-48d7-4261-98ab-27ca66e82af7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Sprint"",
                     ""type"": ""Button"",
                     ""id"": ""f595cca6-8036-46bc-bcd4-6101f035a07d"",
@@ -236,6 +245,28 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6edfa17d-f8c6-4d5a-83ca-5b90a9a1a140"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Fall"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cd44244e-744f-43cf-82e9-517e17fca1e2"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Fall"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -246,6 +277,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_onFoot = asset.FindActionMap("onFoot", throwIfNotFound: true);
         m_onFoot_Walk = m_onFoot.FindAction("Walk", throwIfNotFound: true);
         m_onFoot_Jump = m_onFoot.FindAction("Jump", throwIfNotFound: true);
+        m_onFoot_Fall = m_onFoot.FindAction("Fall", throwIfNotFound: true);
         m_onFoot_Sprint = m_onFoot.FindAction("Sprint", throwIfNotFound: true);
         m_onFoot_Crouch = m_onFoot.FindAction("Crouch", throwIfNotFound: true);
         m_onFoot_Hit = m_onFoot.FindAction("Hit", throwIfNotFound: true);
@@ -313,6 +345,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private List<IOnFootActions> m_OnFootActionsCallbackInterfaces = new List<IOnFootActions>();
     private readonly InputAction m_onFoot_Walk;
     private readonly InputAction m_onFoot_Jump;
+    private readonly InputAction m_onFoot_Fall;
     private readonly InputAction m_onFoot_Sprint;
     private readonly InputAction m_onFoot_Crouch;
     private readonly InputAction m_onFoot_Hit;
@@ -323,6 +356,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public OnFootActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
         public InputAction @Walk => m_Wrapper.m_onFoot_Walk;
         public InputAction @Jump => m_Wrapper.m_onFoot_Jump;
+        public InputAction @Fall => m_Wrapper.m_onFoot_Fall;
         public InputAction @Sprint => m_Wrapper.m_onFoot_Sprint;
         public InputAction @Crouch => m_Wrapper.m_onFoot_Crouch;
         public InputAction @Hit => m_Wrapper.m_onFoot_Hit;
@@ -342,6 +376,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @Fall.started += instance.OnFall;
+            @Fall.performed += instance.OnFall;
+            @Fall.canceled += instance.OnFall;
             @Sprint.started += instance.OnSprint;
             @Sprint.performed += instance.OnSprint;
             @Sprint.canceled += instance.OnSprint;
@@ -364,6 +401,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @Fall.started -= instance.OnFall;
+            @Fall.performed -= instance.OnFall;
+            @Fall.canceled -= instance.OnFall;
             @Sprint.started -= instance.OnSprint;
             @Sprint.performed -= instance.OnSprint;
             @Sprint.canceled -= instance.OnSprint;
@@ -397,6 +437,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     {
         void OnWalk(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnFall(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnCrouch(InputAction.CallbackContext context);
         void OnHit(InputAction.CallbackContext context);
