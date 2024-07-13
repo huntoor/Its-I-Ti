@@ -43,6 +43,8 @@ public class Slime : BaseEnemy
         myAnimator = GetComponent<Animator>();
 
         myAudioSource = GetComponent<AudioSource>();
+
+        PlayerDamageZone.damageEnemy += TakeDamage;
     }
 
     private void Start()
@@ -161,6 +163,24 @@ public class Slime : BaseEnemy
                 myRigidBody.velocity = new Vector2(playerDirection.x * speed * 1.5f, myRigidBody.velocity.y);
             }
         }
+    }
+
+    // protected override void TakeDamage(int damage)
+    // {
+    //     Debug.Log("Damage Enemy by " + damage);
+    //     enemyHealth -= damage;
+
+    //     if (enemyHealth <= 0)
+    //     {
+    //         Dead();
+    //     }
+    // }
+
+    protected override void Dead()
+    {
+        PlayerDamageZone.damageEnemy -= TakeDamage;
+        
+        Destroy(gameObject);
     }
 
     protected override void HandleAnimation()

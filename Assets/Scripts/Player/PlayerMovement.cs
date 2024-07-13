@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     private float moveHorizontal;
     private float moveVertical;
     bool isGrounded;
-    bool isRunning;
+    //bool isRunning;
     bool canStand;
     bool canCrouch;
     bool canSprint;
@@ -18,12 +18,20 @@ public class PlayerMovement : MonoBehaviour
     bool canRun;
     int jumpCount;
 
+    public bool canDoubleAttack;
+    float attackDelay;
+    float doubelAttackDelay;
+
+
     PlayerInput input;
 
     Animator playerAnimations;
     
     AudioSource audioSource;
     [SerializeField] AudioClip forestWalk;
+
+    public delegate void InteractPressed();
+    public static InteractPressed interactPressed;
 
     private void Awake()
     {
@@ -46,6 +54,10 @@ public class PlayerMovement : MonoBehaviour
 
         input.onFoot.Sprint.performed += Sprint;
         input.onFoot.Sprint.canceled += Run;
+
+        input.onFoot.Interact.performed += Interact;
+
+        input.onFoot.Hit.performed += Attack;
     }
 
     void Start()
@@ -57,8 +69,21 @@ public class PlayerMovement : MonoBehaviour
         canSprint = true;
         canRun = true;
         canJump = true;
-        isRunning = false;
+        // isRunning = false;
         jumpCount = 2;
+    }
+
+    void Update()
+    {
+        attackDelay -= Time.deltaTime;
+        doubelAttackDelay -= Time.deltaTime;
+
+        
+
+        if (doubelAttackDelay < 0)
+        {
+            canDoubleAttack = false;
+        }
     }
 
     void FixedUpdate()
@@ -91,13 +116,13 @@ public class PlayerMovement : MonoBehaviour
     {
         if (moveHorizontal != 0f)
         {
-            isRunning = true;
+            //isRunning = true;
             transform.localScale = new Vector3(moveHorizontal * 1.1f, 1.1f, 1.1f);
             rb.velocity = new Vector2(moveHorizontal * speed, rb.velocity.y);
         }
         else if (moveHorizontal == 0f)
         {
-            isRunning = false;
+            //isRunning = false;
             rb.velocity = new Vector2(0, rb.velocity.y);
         }
 
@@ -227,5 +252,29 @@ public class PlayerMovement : MonoBehaviour
             playerAnimations.SetBool("sprinting", false);
             speed = 5;
         }
+    }
+
+    void Attack(InputAction.CallbackContext context)
+    {
+        if (attackDelay < 0)
+        {
+            playerAnimations.SetTrigger("attackOne");
+
+            attackDelay = 1f;
+
+            doubelAttackDelay = 2f;
+        }
+
+        if (canDoubleAttack && doubelAttackDelay > 0)
+        {
+            playerAnimations.SetTrigger("attackTwo");
+
+            canDoubleAttack = false;
+        }
+    }
+
+    void Interact(InputAction.CallbackContext context)
+    {
+        interactPressed?.Invoke();
     }
 }

@@ -49,6 +49,7 @@ public class FlyingEye : BaseEnemy
 
         myAudioSource = GetComponent<AudioSource>();
 
+        PlayerDamageZone.damageEnemy += TakeDamage;
     }
 
     private void Start()
@@ -190,6 +191,24 @@ public class FlyingEye : BaseEnemy
             }
         }
     }
+    
+    // protected override void TakeDamage(int damage)
+    // {
+    //     Debug.Log("Damage Enemy by " + damage);
+    //     enemyHealth -= damage;
+
+    //     if (enemyHealth <= 0)
+    //     {
+    //         Dead();
+    //     }
+    // }
+
+    protected override void Dead()
+    {
+        PlayerDamageZone.damageEnemy -= TakeDamage;
+        
+        Destroy(gameObject);
+    }
 
 
     protected override void HandleAnimation()
@@ -218,7 +237,8 @@ public class FlyingEye : BaseEnemy
             case State.Patrol:
                 myAudioSource.clip = idleSoundClip;
                 myAudioSource.loop = true;
-                myAudioSource.Play();Debug.Log(myAudioSource.isPlaying);
+                myAudioSource.Play();
+                // Debug.Log(myAudioSource.isPlaying);
                 break;
             case State.Chasing:
                 myAudioSource.clip = idleSoundClip;

@@ -28,7 +28,8 @@ public class Shop : MonoBehaviour
     {
         myAudioSource = GetComponent<AudioSource>();
 
-        playerPlaceHolderScript.interactPressed += OpenMenu;
+        //playerPlaceHolderScript.interactPressed += OpenMenu;
+        PlayerMovement.interactPressed += OpenMenu;
     }
 
     private void Start()

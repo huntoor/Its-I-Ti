@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -23,6 +22,11 @@ public abstract class BaseEnemy : MonoBehaviour
     [Header("Audio Manager")]
     [SerializeField] protected AudioManager audioManager;
 
+    [Space]
+
+    [Header("Health")]
+    [Range(1,10)] [SerializeField] protected int enemyHealth;
+
     protected Rigidbody2D myRigidBody;
     protected Animator myAnimator;
 
@@ -38,6 +42,22 @@ public abstract class BaseEnemy : MonoBehaviour
 
         return raycastHit2D.collider != null;
     }
+
+    protected virtual void TakeDamage(int damage, GameObject self)
+    {
+        if (self == gameObject)
+        {
+            Debug.Log("Damage Enemy by " + damage);
+            enemyHealth -= damage;
+
+            if (enemyHealth <= 0)
+            {
+                Dead();
+            }
+        }
+    }
+
+    protected abstract void Dead();
 
     protected abstract void Patrolling();
 

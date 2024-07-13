@@ -2,24 +2,24 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    Rigidbody2D rb;
+    //Rigidbody2D rb;
     int playerHealth;
-    int playerScore;
+    //int playerScore;
     int playerLives;
-    int playerLevel;
 
     Vector2 checkpoint;
 
     void Awake()
     {
-        rb = this.GetComponent<Rigidbody2D>();
-        //Damagezone.damageEvent += TakeDamage;
+        //rb = this.GetComponent<Rigidbody2D>();
+
+        DamageZone.damagePlayer += TakeDamage;
     }
 
     void Start()
     {
-        playerHealth = 100;
-        playerScore = 0;
+        playerHealth = 10;
+        //playerScore = 0;
         playerLives = 3;
         checkpoint = transform.position;
     }

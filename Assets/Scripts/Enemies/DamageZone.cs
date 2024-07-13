@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
@@ -12,6 +13,7 @@ public class DamageZone : MonoBehaviour
 
     private float damageTimer;
     private GameObject player;
+    internal static Action<int> damageEvent;
 
     private void Awake()
     {

@@ -64,6 +64,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 247
   audioManager: {fileID: 0}
+  enemyHealth: 1
   idleSoundClip: {fileID: 8300000, guid: 20028a60a21d54c47bfd1fc2741b8490, type: 3}
   attackingClip: {fileID: 8300000, guid: 97978f893e24b3a4891fc650be468307, type: 3}
   PatrolZone:

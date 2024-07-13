@@ -71,6 +71,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""10047c09-f9ba-4f2e-84df-743feccfef15"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -216,6 +225,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Hit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""235e141d-9b37-474b-b838-4bae16109b8b"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -229,6 +249,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_onFoot_Sprint = m_onFoot.FindAction("Sprint", throwIfNotFound: true);
         m_onFoot_Crouch = m_onFoot.FindAction("Crouch", throwIfNotFound: true);
         m_onFoot_Hit = m_onFoot.FindAction("Hit", throwIfNotFound: true);
+        m_onFoot_Interact = m_onFoot.FindAction("Interact", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -295,6 +316,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_onFoot_Sprint;
     private readonly InputAction m_onFoot_Crouch;
     private readonly InputAction m_onFoot_Hit;
+    private readonly InputAction m_onFoot_Interact;
     public struct OnFootActions
     {
         private @PlayerInput m_Wrapper;
@@ -304,6 +326,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Sprint => m_Wrapper.m_onFoot_Sprint;
         public InputAction @Crouch => m_Wrapper.m_onFoot_Crouch;
         public InputAction @Hit => m_Wrapper.m_onFoot_Hit;
+        public InputAction @Interact => m_Wrapper.m_onFoot_Interact;
         public InputActionMap Get() { return m_Wrapper.m_onFoot; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -328,6 +351,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Hit.started += instance.OnHit;
             @Hit.performed += instance.OnHit;
             @Hit.canceled += instance.OnHit;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
         }
 
         private void UnregisterCallbacks(IOnFootActions instance)
@@ -347,6 +373,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Hit.started -= instance.OnHit;
             @Hit.performed -= instance.OnHit;
             @Hit.canceled -= instance.OnHit;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
         }
 
         public void RemoveCallbacks(IOnFootActions instance)
@@ -371,5 +400,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnSprint(InputAction.CallbackContext context);
         void OnCrouch(InputAction.CallbackContext context);
         void OnHit(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
     }
 }
