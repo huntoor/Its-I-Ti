@@ -1,19 +1,24 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Goblin : BaseEnemy
 {
 
     [Space]
     [Header("Audio Clips")]
-    [SerializeField] private AudioClip idleSoundClip;
-    [SerializeField] private AudioClip detectedPlayerSoundClip;
+    [SerializeField] private AudioClip detectedPlayerClip;
     [SerializeField] private AudioClip attackingClip;
 
+    [Space]
+    [SerializeField] private GameObject attackZone;
+
     private AudioSource myAudioSource;
+    private float attackDelay;
 
     private enum State
     {
-        Patrol,
+        Hidden,
+        Idle,
         Attack,
         Dead
     }
@@ -49,7 +54,7 @@ public class Goblin : BaseEnemy
 
     private void Start()
     {
-        CurrentState = State.Patrol;
+        CurrentState = State.Hidden;
 
         movementDirection = 1;
 
@@ -57,14 +62,23 @@ public class Goblin : BaseEnemy
 
         canMove = true;
 
+        attackDelay = 2f;
+    }
+
+    private void Update()
+    {
+        attackDelay -= Time.deltaTime;
     }
 
     private void FixedUpdate()
     {
         switch (CurrentState)
         {
-            case State.Patrol:
+            case State.Hidden:
                 Patrolling();
+                break;
+            case State.Idle:
+                ReturnToPosition();
                 break;
             case State.Attack:
                 Chasing();
@@ -82,65 +96,87 @@ public class Goblin : BaseEnemy
 
     protected override void Patrolling()
     {
-        if (transform.position.x < initialPosition.x - patrolDestance)
-        {
-            movementDirection = 1;
-            transform.localScale = new Vector2(1, 1);
-            //Debug.Log("move right");
+        myRigidBody.gravityScale = 0;
 
-        }
-        else if (transform.position.x > initialPosition.x + patrolDestance)
-        {
-            movementDirection = -1;
-            transform.localScale = new Vector2(-1, 1);
-            // Debug.Log("move left");
-        }
-        if (canMove)
-        {
-            myRigidBody.velocity = new Vector2(speed * movementDirection, myRigidBody.velocity.y);
-        }
-
-        if (player)
-        {
-            Vector2 playerDirection = (player.transform.position - transform.position).normalized;
-
-            // float angle = Vector2.SignedAngle(transform.right, playerDirection);
-            float angle = Vector2.SignedAngle(transform.localScale * Vector2.right, playerDirection);
-
-            if (angle <= fieldOfView / 2 && angle >= -fieldOfView / 2)
-            {
-
-                if (Physics2D.Raycast(transform.position, playerDirection, 10f, notMeLayer).collider.CompareTag("Player"))
-                {
-
-                    CurrentState = State.Attack;
-                }
-            }
-        }
+        GetComponent<SpriteRenderer>().sortingOrder = -10;
     }
 
     public override void OnPlayerDetected(Collider2D playerCol)
     {
+        CurrentState = State.Attack;
+
+        myAudioSource.clip = detectedPlayerClip;
+        myAudioSource.loop = false;
+        myAudioSource.Play();
+
         player = playerCol.gameObject;
     }
 
     public override void OnPlayerEscape(Collider2D playerCol)
     {
-        CurrentState = State.Patrol;
+        CurrentState = State.Idle;
 
         player = null;
     }
 
     protected override void Chasing()
     {
+        myRigidBody.gravityScale = 1;
+
+        GetComponent<SpriteRenderer>().sortingOrder = 1;
+
+        if (!(myAudioSource.clip == attackingClip && myAudioSource.isPlaying))
+        {
+            myAudioSource.clip = attackingClip;
+            myAudioSource.loop = true;
+            myAudioSource.Play();
+        }
+
+        myAnimator.SetBool("IsRunning", true);
+
         if (player != null)
         {
             Vector2 playerDirection = (player.transform.position - transform.position).normalized;
 
             if (canMove)
             {
-                myRigidBody.velocity = new Vector2(playerDirection.x * speed * 1.5f, myRigidBody.velocity.y);
+                myRigidBody.velocity = new Vector2(playerDirection.x * speed, myRigidBody.velocity.y);
             }
+        }
+
+        if (attackDelay < 0)
+        {
+            attackZone.SetActive(true);
+        }
+    }
+
+    public void Attack(Collider2D body)
+    {
+        myAnimator.SetTrigger("Attack");
+
+        attackZone.SetActive(false);
+
+        attackDelay = 2f;
+    }
+
+    private void ReturnToPosition()
+    {
+        myAudioSource.Stop();
+
+        Vector2 returnDirection = (initialPosition - transform.position).normalized;
+
+        myRigidBody.velocity = returnDirection * speed;
+
+        myAnimator.SetBool("IsRunning", false);
+
+        Debug.Log(transform.position.y);
+        Debug.Log(initialPosition.y);
+
+        if (transform.position.y >= initialPosition.y - 0.3f)
+        {
+            myRigidBody.velocity = Vector2.zero;
+
+            CurrentState = State.Hidden;
         }
     }
 
@@ -155,11 +191,11 @@ public class Goblin : BaseEnemy
     {
         switch (CurrentState)
         {
-            case State.Patrol:
-                myAnimator.SetBool("isAttacking", false);
+            case State.Hidden:
+                break;
+            case State.Idle:
                 break;
             case State.Attack:
-                myAnimator.SetBool("isAttacking", true);
                 break;
             default:
                 Debug.LogError("Handle Animatio Error");
@@ -171,13 +207,12 @@ public class Goblin : BaseEnemy
     {
         switch (CurrentState)
         {
-            case State.Patrol:
-                myAudioSource.loop = true;
-                myAudioSource.clip = idleSoundClip;
-                myAudioSource.Play();
+            case State.Hidden:
+                break;
+            case State.Idle:
                 break;
             case State.Attack:
-                StartCoroutine(audioManager.PlaySoundNext(detectedPlayerSoundClip, false, attackingClip, true, myAudioSource));
+                // StartCoroutine(audioManager.PlaySoundNext(detectedPlayerSoundClip, false, attackingClip, true, myAudioSource));
                 break;
             default:
                 Debug.LogError("Handle Audio Error");

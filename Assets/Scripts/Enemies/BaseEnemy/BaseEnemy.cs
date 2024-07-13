@@ -30,7 +30,7 @@ public abstract class BaseEnemy : MonoBehaviour
     protected Rigidbody2D myRigidBody;
     protected Animator myAnimator;
 
-    protected Vector2 initialPosition;
+    protected Vector3 initialPosition;
     protected GameObject player;
     protected int movementDirection;
     protected bool canMove;

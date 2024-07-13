@@ -63,3 +63,9 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - SoundName: Theme
+    clip: {fileID: 8300000, guid: b25dcf853bb7dbb489b1da316f05f4ea, type: 3}
+    volume: 0.299
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
