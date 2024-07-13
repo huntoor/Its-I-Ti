@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,21 +10,28 @@ public class PlayerMovement : MonoBehaviour
     private float moveHorizontal;
     private float moveVertical;
     bool isGrounded;
+    bool isRunning;
     bool canStand;
     bool canCrouch;
     bool canSprint;
+    bool canJump;
     bool canRun;
     int jumpCount;
 
     PlayerInput input;
 
     Animator playerAnimations;
+    
+    AudioSource audioSource;
+    [SerializeField] AudioClip forestWalk;
 
     private void Awake()
     {
         rb = this.GetComponent<Rigidbody2D>();
 
         playerAnimations = GetComponent<Animator>();
+
+        audioSource = GetComponent<AudioSource>();
 
         input = new PlayerInput();
         input.Enable();
@@ -40,18 +46,18 @@ public class PlayerMovement : MonoBehaviour
 
         input.onFoot.Sprint.performed += Sprint;
         input.onFoot.Sprint.canceled += Run;
-
-        input.onFoot.Hit.performed += OnHit;
-        input.onFoot.Hit.canceled += OnHit;
     }
+
     void Start()
     {
         speed = 5f;
-        jumpForce = 16f;
+        jumpForce = 15f;
         canStand = true;
         canCrouch = true;
         canSprint = true;
         canRun = true;
+        canJump = true;
+        isRunning = false;
         jumpCount = 2;
     }
 
@@ -63,7 +69,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (!canStand)
         {
-            RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, -Vector2.down, 0.8f, 1 << 7);
+            RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, -Vector2.down, 1f, 1 << 7);
 
             if (raycastHit2D.collider == null)
             {
@@ -85,22 +91,28 @@ public class PlayerMovement : MonoBehaviour
     {
         if (moveHorizontal != 0f)
         {
+            isRunning = true;
             transform.localScale = new Vector3(moveHorizontal * 1.1f, 1.1f, 1.1f);
             rb.velocity = new Vector2(moveHorizontal * speed, rb.velocity.y);
+        }
+        else if (moveHorizontal == 0f)
+        {
+            isRunning = false;
+            rb.velocity = new Vector2(0, rb.velocity.y);
         }
 
     }
 
     void CheckIsGrounded()
     {
-        RaycastHit2D ground = Physics2D.BoxCast(transform.position, new Vector2(0.6f, 1.2f), 0f, Vector2.down, 0.7f, 1<<7);
+        RaycastHit2D ground = Physics2D.BoxCast(transform.position, new Vector2(0.5f, 1f), 0f, Vector2.down, 0.6f, 1<<7);
 
         if (ground.collider != null)
         {
             playerAnimations.SetBool("isGrounded", true);
-            playerAnimations.SetBool("secondJump", false);
             playerAnimations.SetBool("isJumping", false);
             isGrounded = true;
+            jumpCount = 2;
             rb.gravityScale = 5;
         }
         else
@@ -113,50 +125,52 @@ public class PlayerMovement : MonoBehaviour
 
     void WallMechanics()
     {
-        RaycastHit2D wall = Physics2D.BoxCast(transform.position, new Vector2(0.6f, 1.2f), 0f, transform.localScale.x * Vector2.right, 0.2f, 1 << 7);
-        Debug.DrawRay(transform.position, 0.3f * transform.localScale.x * Vector2.right, Color.red);
+        RaycastHit2D wall = Physics2D.BoxCast(transform.position, new Vector2(0.5f, 0.5f), 0f, transform.localScale.x * Vector2.right, 0.2f, 1 << 7);
 
-        if (wall.collider != null && !isGrounded && moveHorizontal == 0f)
+        if (wall.collider != null && !isGrounded)
         {
             rb.gravityScale = 0.5f;
-            rb.velocity = new Vector2(0, -1f);
+            playerAnimations.SetBool("isWallSliding", true);
         }
-        else if(wall.collider != null && moveHorizontal != 0f)
+        else if(wall.collider == null || isGrounded)
         {
-            rb.gravityScale = 0.5f;
+            rb.gravityScale = 5f;
+            playerAnimations.SetBool("isWallSliding", false);
         }
     }
 
     void OnJumpInput(InputAction.CallbackContext context)
     {
-        playerAnimations.SetBool("isJumping", true);
-        if (isGrounded)
+        if (canJump)
         {
-            Jump();
-            jumpCount = 2;
-        }
-        else if (!isGrounded && jumpCount > 1)
-        {
-            secondJump();
-            jumpCount--;
+            if (isGrounded)
+            {
+                Jump();
+            }
+            else if (!isGrounded && jumpCount > 1)
+            {
+                SecondJump();
+            }
         }
     }
 
     void Jump()
     {
-        playerAnimations.SetBool("secondJump", true);
+        playerAnimations.SetBool("isJumping", true);
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        jumpCount--;
     }
 
-    void secondJump()
+    void SecondJump()
     {
-        playerAnimations.SetBool("secondJump", false);
-        rb.velocity = new Vector2(rb.velocity.x, jumpForce * 0.9f);
+        playerAnimations.SetBool("isJumping", true);
+        rb.velocity = new Vector2(rb.velocity.x, jumpForce * 0.8f);
+        jumpCount--;
     }
 
     void Uncrouch(InputAction.CallbackContext context)
     {
-        RaycastHit2D Uncrouch = Physics2D.Raycast(transform.position, -Vector2.down, 0.8f, 1<<7);
+        RaycastHit2D Uncrouch = Physics2D.Raycast(transform.position, -Vector2.down, 1f, 1<<7);
         
         if (Uncrouch.collider == null)
         {
@@ -174,21 +188,23 @@ public class PlayerMovement : MonoBehaviour
         canSprint = true;
         canRun = true;
         canCrouch = true;
+        canJump = true;
         playerAnimations.SetBool("isCrouching", false);
         speed = 5;
-        GetComponent<CapsuleCollider2D>().size = new Vector2(0.6f, 1.2f);
+        GetComponent<CapsuleCollider2D>().size = new Vector2(0.5f, 1f);
     }
 
     void Crouch(InputAction.CallbackContext context)
     {
         if (canCrouch)
         {
+            canJump = false;
             canSprint = false;
             canRun = false;
             playerAnimations.SetBool("isCrouching", true);
             playerAnimations.SetBool("sprinting", false);
             speed = 2;
-            GetComponent<CapsuleCollider2D>().size = new Vector2(0.6f, 0.8f);
+            GetComponent<CapsuleCollider2D>().size = new Vector2(0.5f, 0.6f);
         }
     }
 
@@ -198,7 +214,7 @@ public class PlayerMovement : MonoBehaviour
         {
             canCrouch = false;
             playerAnimations.SetBool("sprinting", true);
-            speed = 10;
+            speed = 7;
         }
     }
 
@@ -212,10 +228,4 @@ public class PlayerMovement : MonoBehaviour
             speed = 5;
         }
     }
-
-    void OnHit(InputAction.CallbackContext context)
-    {
-        Debug.Log("Hit");
-    }
-
 }
