@@ -1,7 +1,4 @@
-using System.Resources;
-using System.Threading;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class FlyingEye : BaseEnemy
 {
@@ -182,7 +179,6 @@ public class FlyingEye : BaseEnemy
             myAudioSource.clip = attackingClip;
             myAudioSource.loop = false;
             myAudioSource.Play();
-            Debug.Log(myAudioSource.isPlaying);
         }
         else
         {

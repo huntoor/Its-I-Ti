@@ -22,8 +22,6 @@ public class Parallex : MonoBehaviour
         float movedDistance = cam.transform.position.x * (1 - parallexEffect);
         float distance = cam.transform.position.x * parallexEffect;
 
-        Debug.Log(movedDistance);
-
         transform.position = new Vector3(startPos + distance, transform.position.y, transform.position.z);
 
         if (movedDistance > startPos + length)

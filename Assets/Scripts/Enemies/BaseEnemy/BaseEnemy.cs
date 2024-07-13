@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]

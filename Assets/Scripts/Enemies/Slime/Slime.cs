@@ -200,8 +200,6 @@ public class Slime : BaseEnemy
                 //     myAudioSource.clip = attackingClip;
                 //     myAudioSource.Play();
                 // }
-                Debug.Log(detectedPlayerSoundClip);
-                Debug.Log(attackingClip);
                 StartCoroutine(audioManager.PlaySoundNext(detectedPlayerSoundClip, false, attackingClip, true, myAudioSource));
 
                 //audioManager.PlaySound("PlayerDetected");
