@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Slime : BaseEnemy
@@ -42,8 +43,15 @@ public class Slime : BaseEnemy
         myAnimator = GetComponent<Animator>();
 
         myAudioSource = GetComponent<AudioSource>();
+    }
 
+    private void OnEnable()
+    {
         PlayerDamageZone.damageEnemy += TakeDamage;
+    }
+    private void OnDisable()
+    {
+        PlayerDamageZone.damageEnemy -= TakeDamage;
     }
 
     private void Start()
@@ -178,9 +186,11 @@ public class Slime : BaseEnemy
     protected override void Dead()
     {
         PlayerDamageZone.damageEnemy -= TakeDamage;
-        
-        Destroy(gameObject);
+
+        Destroy(gameObject);   
     }
+
+    
 
     protected override void HandleAnimation()
     {

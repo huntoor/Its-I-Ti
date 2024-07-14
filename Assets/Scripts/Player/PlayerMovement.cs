@@ -1,5 +1,3 @@
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -65,7 +63,46 @@ public class PlayerMovement : MonoBehaviour
 
         input.onFoot.Hit.performed += Attack;
     }
+     void OnEnable()
+     {
+        input.Enable();
 
+        input.onFoot.Walk.performed += OnMoveInput;
+        input.onFoot.Walk.canceled += OnMoveInput;
+
+        input.onFoot.Jump.performed += OnJumpInput;
+
+        input.onFoot.Crouch.performed += Crouch;
+        input.onFoot.Crouch.canceled += Uncrouch;
+
+        input.onFoot.Sprint.performed += Sprint;
+        input.onFoot.Sprint.canceled += Run;
+
+        input.onFoot.Interact.performed += Interact;
+
+        input.onFoot.Hit.performed += Attack;
+     }
+
+     void OnDisable()
+     {
+
+        input.onFoot.Walk.performed -= OnMoveInput;
+        input.onFoot.Walk.canceled -= OnMoveInput;
+
+        input.onFoot.Jump.performed -= OnJumpInput;
+
+        input.onFoot.Crouch.performed -= Crouch;
+        input.onFoot.Crouch.canceled -= Uncrouch;
+
+        input.onFoot.Sprint.performed -= Sprint;
+        input.onFoot.Sprint.canceled -= Run;
+
+        input.onFoot.Interact.performed -= Interact;
+
+        input.onFoot.Hit.performed -= Attack;
+
+        input.Disable();
+     }
     void Start()
     {
         speed = 5f;
