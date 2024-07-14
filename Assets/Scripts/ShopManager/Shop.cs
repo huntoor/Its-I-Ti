@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Shop : MonoBehaviour
 {
@@ -113,6 +114,6 @@ public class Shop : MonoBehaviour
     public void GoToNextLevel()
     {
         Debug.Log("Go to Next Scene " + nextSceneName);
-        // SceneManager.LoadScene(nextSceneName);
+        SceneManager.LoadScene(nextSceneName);
     }
 }
