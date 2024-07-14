@@ -84,7 +84,6 @@ public class PlayerMovement : MonoBehaviour
         attackDelay -= Time.deltaTime;
         doubelAttackDelay -= Time.deltaTime;
 
-        
 
         if (doubelAttackDelay < 0)
         {

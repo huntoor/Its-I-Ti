@@ -21,7 +21,7 @@ public class Shop : MonoBehaviour
     private AudioSource myAudioSource;
 
     private bool playerEntered;
-    private playerPlaceHolderScript player;
+    private PlayerMovement player;
 
 
     private void Awake()
@@ -45,7 +45,7 @@ public class Shop : MonoBehaviour
 
             playerEntered = true;
 
-            player = body.GetComponent<playerPlaceHolderScript>();
+            player = body.GetComponent<PlayerMovement>();
         }
     }
 
@@ -83,10 +83,10 @@ public class Shop : MonoBehaviour
         if (player != null)
         {
             // playerPlaceHolderScript.BuyItem(Items.ItemType.DoubleJump);
-            if (player.CanBurchase(doubleJumpCost))
-            {
+            //if (player.CanPurchase(doubleJumpCost))
+            //{
                 
-            }
+            //}
 
         }
     }
