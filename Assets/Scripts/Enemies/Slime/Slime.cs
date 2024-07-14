@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Slime : BaseEnemy
@@ -178,9 +179,11 @@ public class Slime : BaseEnemy
     protected override void Dead()
     {
         PlayerDamageZone.damageEnemy -= TakeDamage;
-        
-        Destroy(gameObject);
+
+        Destroy(gameObject);   
     }
+
+    
 
     protected override void HandleAnimation()
     {
