@@ -28,8 +28,16 @@ public class GameManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
+    }
 
+    private void OnEnable()
+    {
         CheckPoint.onSavePontEntered += SaveCurrentLocation;
+    }
+
+    void OnDestroy()
+    {
+        CheckPoint.onSavePontEntered -= SaveCurrentLocation;
     }
 
     private void Start()

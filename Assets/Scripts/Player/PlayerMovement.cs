@@ -46,22 +46,6 @@ public class PlayerMovement : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         input = new PlayerInput();
-        input.Enable();
-
-        input.onFoot.Walk.performed += OnMoveInput;
-        input.onFoot.Walk.canceled += OnMoveInput;
-
-        input.onFoot.Jump.performed += OnJumpInput;
-
-        input.onFoot.Crouch.performed += Crouch;
-        input.onFoot.Crouch.canceled += Uncrouch;
-
-        input.onFoot.Sprint.performed += Sprint;
-        input.onFoot.Sprint.canceled += Run;
-
-        input.onFoot.Interact.performed += Interact;
-
-        input.onFoot.Hit.performed += Attack;
     }
      void OnEnable()
      {
@@ -103,6 +87,11 @@ public class PlayerMovement : MonoBehaviour
 
         input.Disable();
      }
+    public PlayerInput GetInput()
+    {
+       return input;
+    }
+
     void Start()
     {
         speed = 5f;

@@ -1503,6 +1503,22 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5997438493243241348, guid: bbbe92f176401df4082da196f0e9add4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5997438493243241348, guid: bbbe92f176401df4082da196f0e9add4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 831821957}
+    - target: {fileID: 5997438493243241348, guid: bbbe92f176401df4082da196f0e9add4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: QuitGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 5997438493243241348, guid: bbbe92f176401df4082da196f0e9add4, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: QuitTheGame, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 6585620115241799125, guid: bbbe92f176401df4082da196f0e9add4, type: 3}
       propertyPath: mapWidth
       value: 190
@@ -1514,8 +1530,28 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1481640733367416864, guid: bbbe92f176401df4082da196f0e9add4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 831821957}
   m_SourcePrefab: {fileID: 100100000, guid: bbbe92f176401df4082da196f0e9add4, type: 3}
+--- !u!1 &831821956 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1481640733367416864, guid: bbbe92f176401df4082da196f0e9add4, type: 3}
+  m_PrefabInstance: {fileID: 831821955}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &831821957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 831821956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d30428accb7ffb14ea83f13a136e1d97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &899842290
 GameObject:
   m_ObjectHideFlags: 0

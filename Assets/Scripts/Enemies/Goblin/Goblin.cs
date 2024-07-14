@@ -48,8 +48,16 @@ public class Goblin : BaseEnemy
         myAnimator = GetComponent<Animator>();
 
         myAudioSource = GetComponent<AudioSource>();
+    }
 
+    void OnEnable()
+    {
         PlayerDamageZone.damageEnemy += TakeDamage;
+    }
+
+    void OnDisable()
+    {
+        PlayerDamageZone.damageEnemy -= TakeDamage;
     }
 
     private void Start()

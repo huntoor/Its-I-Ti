@@ -11,11 +11,6 @@ public class Tutorial : MonoBehaviour
         popUp.enabled = false;
     }
 
-    private void Update()
-    {
-        
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")

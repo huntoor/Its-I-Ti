@@ -24,18 +24,36 @@ public class Shop : MonoBehaviour
     private bool playerEntered;
     private PlayerMovement player;
 
+    bool menuState;
+
 
     private void Awake()
     {
         myAudioSource = GetComponent<AudioSource>();
+        menuState = false;
 
         //playerPlaceHolderScript.interactPressed += OpenMenu;
+        
+    }
+
+    private void OnEnable()
+    {
         PlayerMovement.interactPressed += OpenMenu;
+    }
+
+    private void OnDisable()
+    {
+        PlayerMovement.interactPressed -= OpenMenu;
     }
 
     private void Start()
     {
         playerEntered = false;
+    }
+
+    private void Update()
+    {
+        Move();
     }
 
     private void OnTriggerEnter2D(Collider2D body)
@@ -47,6 +65,7 @@ public class Shop : MonoBehaviour
             playerEntered = true;
 
             player = body.GetComponent<PlayerMovement>();
+
         }
     }
 
@@ -72,9 +91,23 @@ public class Shop : MonoBehaviour
             {
                 myAudioSource.Play();
             }
-
             shopPanel.SetActive(true);
+            menuState = true;
+        }
+    }
 
+    private void Move()
+    {
+        if (playerEntered)
+        {
+            if (shopPanel.activeSelf == true || menuState)
+            {
+                player.GetInput().Disable();
+            }
+            else if (shopPanel.activeSelf == false || !menuState)
+            {
+                player.GetInput().Enable();
+            }
         }
     }
 
@@ -110,6 +143,7 @@ public class Shop : MonoBehaviour
     public void ExitShop()
     {
         shopPanel.SetActive(false);
+        menuState = false;
     }
     public void GoToNextLevel()
     {
