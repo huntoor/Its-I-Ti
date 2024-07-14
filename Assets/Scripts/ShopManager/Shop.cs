@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.SceneManagement;
 
 public class Shop : MonoBehaviour
 {
