@@ -43,8 +43,15 @@ public class Slime : BaseEnemy
         myAnimator = GetComponent<Animator>();
 
         myAudioSource = GetComponent<AudioSource>();
+    }
 
+    private void OnEnable()
+    {
         PlayerDamageZone.damageEnemy += TakeDamage;
+    }
+    private void OnDisable()
+    {
+        PlayerDamageZone.damageEnemy -= TakeDamage;
     }
 
     private void Start()

@@ -18,9 +18,18 @@ public class Player : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+    }
 
+    void OnEnable()
+    {
         DamageZone.damagePlayer += TakeDamage;
         GameManager.increaseHP += IncreaseHP;
+    }
+
+    void OnDisable()
+    {
+        DamageZone.damagePlayer -= TakeDamage;
+        GameManager.increaseHP -= IncreaseHP;
     }
 
     void Start()
